@@ -1,5 +1,5 @@
-import React, { useEffect, useState ,useContext, useCallback} from "react";
-import { useParams,useHistory } from "react-router-dom";
+import React, { useEffect, useState, useContext, useCallback } from "react";
+import { useParams, useHistory } from "react-router-dom";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import {
@@ -20,7 +20,6 @@ function UpdatePlace() {
   const [loadedPlace, setLoadedPlace] = useState();
   const placeId = useParams().placeId;
   const history = useHistory();
-  
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -39,7 +38,9 @@ function UpdatePlace() {
   useEffect(() => {
     const fetchPlace = async () => {
       try {
-        const responseData = await sendRequest(`http://localhost:5000/api/places/${placeId}`);
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/places/${placeId}`
+        );
 
         setLoadedPlace(responseData.place);
         setFormData(
@@ -55,7 +56,6 @@ function UpdatePlace() {
           },
           true
         );
-       
       } catch (err) {}
     };
     fetchPlace();
@@ -65,18 +65,22 @@ function UpdatePlace() {
 
   const placeUpdateSubmitHandler = async (event) => {
     event.preventDefault();
-    try{
-      await sendRequest(`http://localhost:5000/api/places/${placeId}`,'PATCH',JSON.stringify({
-        title:formState.inputs.title.value,
-        description:formState.inputs.description.value,
-      }),
-      {'Content-Type':'application/json'}
-      )
-      history.push(`/${auth.userId}/places`);//redirects
-    } catch(err){}
-
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/places/${placeId}`,
+        "PATCH",
+        JSON.stringify({
+          title: formState.inputs.title.value,
+          description: formState.inputs.description.value,
+        }),
+        {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
+        }
+      );
+      history.push(`/${auth.userId}/places`); //redirects
+    } catch (err) {}
   };
-  
 
   if (isLoading) {
     return (
